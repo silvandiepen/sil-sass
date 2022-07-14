@@ -6,19 +6,24 @@ import {
   isCssBoolean,
 } from "./is";
 
-export const SassValue = (input: any) => {
+export const toSassValue = (input: string | (string | number)[]): string => {
   let convertedInput = "";
-  if (
-    isCssNumber(input) ||
-    (typeof input == "string" && isCssColor(input)) ||
-    (typeof input == "string" && isCssFunction(input)) ||
-    (typeof input == "string" && isCssPropertyValue(input)) ||
-    (typeof input == "string" && isCssBoolean(input)) ||
-    (typeof input == "string" && input.startsWith("'"))
+  if (typeof input == "boolean") {
+    convertedInput = input ? "true" : "false";
+  } else if (
+    typeof input == "string" &&
+    (isCssNumber(input) ||
+      isCssColor(input) ||
+      isCssFunction(input) ||
+      isCssPropertyValue(input) ||
+      isCssBoolean(input) ||
+      input.startsWith("'"))
   ) {
-    convertedInput = input;
+    convertedInput = `${input}`;
   } else if (typeof input == "string") {
     convertedInput = `"${input}"`;
+  } else if (typeof input == "number") {
+    convertedInput = `${input}`;
   } else if (Array.isArray(input)) {
     convertedInput = `(${input.join(", ")})`;
   } else {
@@ -31,12 +36,22 @@ export const SassValue = (input: any) => {
   return convertedInput;
 };
 
-export const SassObject = (input: any): string => {
-  let SassObjectGroup: string[] = [];
+export const toSassObject = (input: any): string => {
+  const sassObjectGroup: string[] = [];
 
   Object.keys(input).forEach((entry: string) => {
-    SassObjectGroup.push(`"${entry}": ${SassValue(input[entry])}`);
+    sassObjectGroup.push(`"${entry}": ${toSassValue(input[entry])}`);
   });
 
-  return SassObjectGroup.join(",\n");
+  return sassObjectGroup.join(",\n");
+};
+
+export const toSassVariables = (input: any): string => {
+  const sassVariableGroup: string[] = [];
+
+  Object.keys(input).forEach((entry: string) => {
+    sassVariableGroup.push(`$${entry}: ${toSassValue(input[entry])};`);
+  });
+
+  return sassVariableGroup.join("\n");
 };
