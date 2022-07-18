@@ -1,3 +1,4 @@
-import * as all from "../types/cssValues";
+import {cssValues } from "../types/cssValues";
 
-export const propertyValues = Object.values(all);
+
+export const propertyValues =cssValues;

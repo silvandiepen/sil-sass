@@ -1,7 +1,7 @@
 import { camelCase } from "@sil/case";
 import { uppercased } from "../helpers";
 
-const cssValues = [
+export const cssValues = [
   "above",
   "absolute",
   "adjecent",

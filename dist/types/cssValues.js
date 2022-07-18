@@ -1,9 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.cssValue = void 0;
+exports.cssValue = exports.cssValues = void 0;
 const case_1 = require("@sil/case");
 const helpers_1 = require("../helpers");
-const cssValues = [
+exports.cssValues = [
     "above",
     "absolute",
     "adjecent",
@@ -241,7 +241,7 @@ const cssValues = [
 ];
 const cssValue = {};
 exports.cssValue = cssValue;
-cssValues.forEach((prop) => {
+exports.cssValues.forEach((prop) => {
     cssValue[(0, helpers_1.uppercased)(prop)] = prop;
     cssValue[`${(0, helpers_1.uppercased)(prop)}_c`] = (0, case_1.camelCase)(prop);
 });
