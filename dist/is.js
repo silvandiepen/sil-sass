@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.isCssBoolean = exports.isCssColor = exports.isCssNumber = exports.isCssPropertyValue = exports.isCssFunction = void 0;
+exports.isCssCombi = exports.isCssValue = exports.isCssBoolean = exports.isCssColor = exports.isCssNumber = exports.isCssPropertyValue = exports.isCssFunction = void 0;
 const data_1 = require("./data/");
 const color_1 = require("@sil/color");
 const isCssFunction = (str) => data_1.functions.some((v) => str.includes(`${v}(`) && str.endsWith(")"));
@@ -27,3 +27,45 @@ const isCssColor = (str) => {
 exports.isCssColor = isCssColor;
 const isCssBoolean = (str) => str == "true" || str == "false";
 exports.isCssBoolean = isCssBoolean;
+const isCssValue = (str) => (0, exports.isCssNumber)(str) ||
+    (0, exports.isCssColor)(str) ||
+    (0, exports.isCssFunction)(str) ||
+    (0, exports.isCssPropertyValue)(str) ||
+    (0, exports.isCssBoolean)(str);
+exports.isCssValue = isCssValue;
+const isCssCombi = (str) => {
+    if (typeof str == "number")
+        return true;
+    const brokenStr = str
+        .replace(/\ *\([^)]*\)/g, (x) => x.replaceAll(" ", ""))
+        .split(" ");
+    console.table({
+        value: brokenStr,
+        number: brokenStr.some((s) => (0, exports.isCssNumber)(s)),
+        color: brokenStr.some((s) => (0, exports.isCssColor)(s)),
+        func: brokenStr.some((s) => (0, exports.isCssFunction)(s)),
+        propvalue: brokenStr.some((s) => (0, exports.isCssPropertyValue)(s)),
+        bool: brokenStr.some((s) => (0, exports.isCssBoolean)(s)),
+    });
+    const arr = [];
+    // {
+    //   str: "",
+    //   number: true,
+    //   color: true,
+    //   func: true,
+    //   prop: true,
+    //   bool: true,
+    // };
+    brokenStr.forEach((s) => {
+        arr.push({
+            str: s,
+            number: (0, exports.isCssNumber)(s),
+            color: (0, exports.isCssColor)(s),
+            func: (0, exports.isCssFunction)(s),
+            prop: (0, exports.isCssPropertyValue)(s),
+            bool: (0, exports.isCssBoolean)(s),
+        });
+    });
+    return brokenStr.some((s) => (0, exports.isCssValue)(s));
+};
+exports.isCssCombi = isCssCombi;

@@ -93,3 +93,17 @@ describe("CSS Boolean", () => {
         });
     });
 });
+const combiOptions = [
+    { input: "0 3px 4px 0 rgba(0, 0, 0, 0.1)", output: true },
+    { input: "0px 3px 4px 0 rgba(0, 0, 0, 0.1)", output: true },
+    { input: "0px 3px 4px 0 rgba[0, 0, 0, 0.1]", output: false },
+    { input: "something", output: false },
+];
+describe("CSS Combi", () => {
+    Object.keys(combiOptions).forEach((_v, key) => {
+        const value = combiOptions[key];
+        it(`Should check if it's a misc - ${value.input} -> ${value.output}`, () => {
+            expect((0, is_1.isCssCombi)(value.input)).toBe(value.output);
+        });
+    });
+});

@@ -1,9 +1,7 @@
 import {
-  isCssNumber,
-  isCssColor,
-  isCssFunction,
-  isCssPropertyValue,
-  isCssBoolean,
+  
+  isCssValue,
+  isCssCombi
 } from "./is";
 
 import { SassInput, SassInputTypes } from "./types";
@@ -14,11 +12,7 @@ export const toSassValue = (input: SassInputTypes): string => {
     convertedInput = input ? "true" : "false";
   } else if (
     typeof input == "string" &&
-    (isCssNumber(input) ||
-      isCssColor(input) ||
-      isCssFunction(input) ||
-      isCssPropertyValue(input) ||
-      isCssBoolean(input) ||
+    (isCssValue(input) ||isCssCombi(input) ||
       input.startsWith("'"))
   ) {
     convertedInput = `${input}`;

@@ -3,6 +3,8 @@ import {
   isCssFunction,
   isCssColor,
   isCssBoolean,
+  isCssCombi,
+  isCssNumber,
 } from "./is";
 
 const valueOptions: { input: string; output: boolean }[] = [
@@ -34,7 +36,6 @@ const valueOptions: { input: string; output: boolean }[] = [
 
 describe("CSS Value", () => {
   Object.keys(valueOptions).forEach((_v, key) => {
-
     const value = valueOptions[key];
     it(`Should check if it's a property value - ${value.input} -> ${value.output}`, () => {
       expect(isCssPropertyValue(value.input)).toBe(value.output);
@@ -101,6 +102,41 @@ describe("CSS Boolean", () => {
     const value = booleanOptions[key];
     it(`Should check if it's a boolean - ${value.input} -> ${value.output}`, () => {
       expect(isCssBoolean(value.input)).toBe(value.output);
+    });
+  });
+});
+const numberOptions: { input: string; output: boolean }[] = [
+  { input: "0", output: true },
+  { input: "1", output: true },
+  { input: "0.5", output: true },
+  { input: "10px", output: true },
+  { input: "0px", output: true },
+  { input: "20000s", output: true },
+  { input: "0]", output: false },
+  { input: "0.1]", output: false },
+  { input: "20seconds", output: false },
+];
+
+describe("CSS Numbers", () => {
+  Object.keys(numberOptions).forEach((_v, key) => {
+    const value = numberOptions[key];
+    it(`Should check if it's a boolean - ${value.input} -> ${value.output}`, () => {
+      expect(isCssNumber(value.input)).toBe(value.output);
+    });
+  });
+});
+const combiOptions: { input: string; output: boolean }[] = [
+  { input: "0 3px 4px 0 rgba(0, 0, 0, 0.1)", output: true },
+  { input: "0px 3px 4px 0 rgba(0, 0, 0, 0.1)", output: true },
+  { input: "0px 3px 4px 0 rgba[0, 0, 0, 0.1]", output: false },
+  { input: "something", output: false },
+];
+
+describe("CSS Combi", () => {
+  Object.keys(combiOptions).forEach((_v, key) => {
+    const value = combiOptions[key];
+    it(`Should check if it's a misc - ${value.input} -> ${value.output}`, () => {
+      expect(isCssCombi(value.input)).toBe(value.output);
     });
   });
 });

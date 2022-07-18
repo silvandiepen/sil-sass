@@ -8,11 +8,7 @@ const toSassValue = (input) => {
         convertedInput = input ? "true" : "false";
     }
     else if (typeof input == "string" &&
-        ((0, is_1.isCssNumber)(input) ||
-            (0, is_1.isCssColor)(input) ||
-            (0, is_1.isCssFunction)(input) ||
-            (0, is_1.isCssPropertyValue)(input) ||
-            (0, is_1.isCssBoolean)(input) ||
+        ((0, is_1.isCssValue)(input) || (0, is_1.isCssCombi)(input) ||
             input.startsWith("'"))) {
         convertedInput = `${input}`;
     }
