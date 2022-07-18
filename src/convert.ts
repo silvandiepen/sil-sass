@@ -6,7 +6,9 @@ import {
   isCssBoolean,
 } from "./is";
 
-export const toSassValue = (input: string | (string | number)[]): string => {
+import { SassInput, SassInputTypes } from "./types";
+
+export const toSassValue = (input: SassInputTypes): string => {
   let convertedInput = "";
   if (typeof input == "boolean") {
     convertedInput = input ? "true" : "false";
@@ -36,7 +38,7 @@ export const toSassValue = (input: string | (string | number)[]): string => {
   return convertedInput;
 };
 
-export const toSassObject = (input: any): string => {
+export const toSassObject = (input: SassInput): string => {
   const sassObjectGroup: string[] = [];
 
   Object.keys(input).forEach((entry: string) => {
@@ -46,7 +48,7 @@ export const toSassObject = (input: any): string => {
   return sassObjectGroup.join(",\n");
 };
 
-export const toSassVariables = (input: any): string => {
+export const toSassVariables = (input: SassInput): string => {
   const sassVariableGroup: string[] = [];
 
   Object.keys(input).forEach((entry: string) => {

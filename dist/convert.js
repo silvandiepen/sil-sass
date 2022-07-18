@@ -1,38 +1,53 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.SassObject = exports.SassValue = void 0;
-var is_1 = require("./is");
-var SassValue = function (input) {
-    var convertedInput = "";
-    if ((0, is_1.isCssNumber)(input) ||
-        (typeof input == "string" && (0, is_1.isCssColor)(input)) ||
-        (typeof input == "string" && (0, is_1.isCssFunction)(input)) ||
-        (typeof input == "string" && (0, is_1.isCssPropertyValue)(input)) ||
-        (typeof input == "string" && (0, is_1.isCssBoolean)(input)) ||
-        (typeof input == "string" && input.startsWith("'"))) {
-        convertedInput = input;
+exports.toSassVariables = exports.toSassObject = exports.toSassValue = void 0;
+const is_1 = require("./is");
+const toSassValue = (input) => {
+    let convertedInput = "";
+    if (typeof input == "boolean") {
+        convertedInput = input ? "true" : "false";
+    }
+    else if (typeof input == "string" &&
+        ((0, is_1.isCssNumber)(input) ||
+            (0, is_1.isCssColor)(input) ||
+            (0, is_1.isCssFunction)(input) ||
+            (0, is_1.isCssPropertyValue)(input) ||
+            (0, is_1.isCssBoolean)(input) ||
+            input.startsWith("'"))) {
+        convertedInput = `${input}`;
     }
     else if (typeof input == "string") {
-        convertedInput = "\"".concat(input, "\"");
+        convertedInput = `"${input}"`;
+    }
+    else if (typeof input == "number") {
+        convertedInput = `${input}`;
     }
     else if (Array.isArray(input)) {
-        convertedInput = "(".concat(input.join(", "), ")");
+        convertedInput = `(${input.join(", ")})`;
     }
     else {
-        var entries_1 = [];
-        Object.keys(input).forEach(function (entry) {
-            entries_1.push("".concat(entry, " : ").concat(input[entry]));
+        let entries = [];
+        Object.keys(input).forEach((entry) => {
+            entries.push(`${entry} : ${input[entry]}`);
         });
-        convertedInput = "(".concat(entries_1.join(", "), ")");
+        convertedInput = `(${entries.join(", ")})`;
     }
     return convertedInput;
 };
-exports.SassValue = SassValue;
-var SassObject = function (input) {
-    var SassObjectGroup = [];
-    Object.keys(input).forEach(function (entry) {
-        SassObjectGroup.push("\"".concat(entry, "\": ").concat((0, exports.SassValue)(input[entry])));
+exports.toSassValue = toSassValue;
+const toSassObject = (input) => {
+    const sassObjectGroup = [];
+    Object.keys(input).forEach((entry) => {
+        sassObjectGroup.push(`"${entry}": ${(0, exports.toSassValue)(input[entry])}`);
     });
-    return SassObjectGroup.join(",\n");
+    return sassObjectGroup.join(",\n");
 };
-exports.SassObject = SassObject;
+exports.toSassObject = toSassObject;
+const toSassVariables = (input) => {
+    const sassVariableGroup = [];
+    Object.keys(input).forEach((entry) => {
+        sassVariableGroup.push(`$${entry}: ${(0, exports.toSassValue)(input[entry])};`);
+    });
+    return sassVariableGroup.join("\n");
+};
+exports.toSassVariables = toSassVariables;

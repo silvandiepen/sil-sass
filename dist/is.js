@@ -1,18 +1,14 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.isCssBoolean = exports.isCssColor = exports.isCssNumber = exports.isCssPropertyValue = exports.isCssFunction = void 0;
-var data_1 = require("./data/");
-var color_1 = require("@sil/color");
-var isCssFunction = function (str) {
-    return data_1.functions.some(function (v) { return str.includes("".concat(v, "(")) && str.endsWith(")"); });
-};
+const data_1 = require("./data/");
+const color_1 = require("@sil/color");
+const isCssFunction = (str) => data_1.functions.some((v) => str.includes(`${v}(`) && str.endsWith(")"));
 exports.isCssFunction = isCssFunction;
-var isCssPropertyValue = function (str) {
-    return data_1.propertyValues.includes(str);
-};
+const isCssPropertyValue = (str) => data_1.propertyValues.includes(str);
 exports.isCssPropertyValue = isCssPropertyValue;
-var isCssNumber = function (str) {
-    var isNumber = false;
+const isCssNumber = (str) => {
+    let isNumber = false;
     if (str == "0")
         isNumber = true;
     if (typeof str == "number")
@@ -23,13 +19,11 @@ var isCssNumber = function (str) {
     return isNumber;
 };
 exports.isCssNumber = isCssNumber;
-var isCssColor = function (str) {
+const isCssColor = (str) => {
     if (typeof str == "number")
         return false;
     return (0, color_1.isHex)(str) || (0, color_1.isRGB)(str) || (0, color_1.isRGBA)(str) || (0, color_1.isHSL)(str) || (0, color_1.isHSLA)(str);
 };
 exports.isCssColor = isCssColor;
-var isCssBoolean = function (str) {
-    return str == "true" || str == "false";
-};
+const isCssBoolean = (str) => str == "true" || str == "false";
 exports.isCssBoolean = isCssBoolean;

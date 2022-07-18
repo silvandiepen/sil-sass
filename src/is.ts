@@ -4,8 +4,7 @@ import { isHex, isHSL, isHSLA, isRGB, isRGBA } from "@sil/color";
 export const isCssFunction = (str: string): boolean =>
   functions.some((v) => str.includes(`${v}(`) && str.endsWith(")"));
 
-export const isCssPropertyValue = (str: string): boolean =>
-  propertyValues.includes(str);
+export const isCssPropertyValue = (str: string): boolean => propertyValues.includes(str as any);
 
 export const isCssNumber = (str: string | number): boolean => {
   let isNumber = false;

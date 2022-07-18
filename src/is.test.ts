@@ -34,6 +34,7 @@ const valueOptions: { input: string; output: boolean }[] = [
 
 describe("CSS Value", () => {
   Object.keys(valueOptions).forEach((_v, key) => {
+
     const value = valueOptions[key];
     it(`Should check if it's a property value - ${value.input} -> ${value.output}`, () => {
       expect(isCssPropertyValue(value.input)).toBe(value.output);
