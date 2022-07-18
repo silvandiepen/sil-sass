@@ -1,7 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const cssValues_1 = require("./cssValues");
-const cssProperties_1 = require("./cssProperties");
 const cubicBezier = () => { };
 const test = {
     position: "absolute",
