@@ -4,9 +4,8 @@ const cssValues_1 = require("./cssValues");
 const cubicBezier = () => { };
 const test = {
     position: "absolute",
-    // 'transition-timing-function': cubicBezier(0,0,0,0),
-    // transitionTimingFunction: "ease"
 };
 const test2 = {
     position: cssValues_1.cssValue.ABSOLUTE,
 };
+//# sourceMappingURL=css.js.map

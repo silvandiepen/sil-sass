@@ -89,6 +89,5 @@ exports.cssProperties.forEach((prop) => {
     const key_c = Symbol(`${(0, helpers_1.uppercased)(prop)}_c`);
     Object.assign(cssProperty, { [key]: prop });
     Object.assign(cssProperty, { [key_c]: (0, case_1.camelCase)(prop) });
-    //   cssProperty[key] = prop;
-    //   cssProperty[`${uppercased(prop)}_c`] = camelCase(prop);
 });
+//# sourceMappingURL=cssProperties.js.map

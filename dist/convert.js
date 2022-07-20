@@ -47,3 +47,4 @@ const toSassVariables = (input) => {
     return sassVariableGroup.join("\n");
 };
 exports.toSassVariables = toSassVariables;
+//# sourceMappingURL=convert.js.map

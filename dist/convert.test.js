@@ -56,3 +56,4 @@ $content: "something";`;
         expect((0, convert_1.toSassVariables)(input)).toBe(output);
     });
 });
+//# sourceMappingURL=convert.test.js.map

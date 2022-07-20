@@ -93,6 +93,25 @@ describe("CSS Boolean", () => {
         });
     });
 });
+const numberOptions = [
+    { input: "0", output: true },
+    { input: "1", output: true },
+    { input: "0.5", output: true },
+    { input: "10px", output: true },
+    { input: "0px", output: true },
+    { input: "20000s", output: true },
+    { input: "0]", output: false },
+    { input: "0.1]", output: false },
+    { input: "20seconds", output: false },
+];
+describe("CSS Numbers", () => {
+    Object.keys(numberOptions).forEach((_v, key) => {
+        const value = numberOptions[key];
+        it(`Should check if it's a boolean - ${value.input} -> ${value.output}`, () => {
+            expect((0, is_1.isCssNumber)(value.input)).toBe(value.output);
+        });
+    });
+});
 const combiOptions = [
     { input: "0 3px 4px 0 rgba(0, 0, 0, 0.1)", output: true },
     { input: "0px 3px 4px 0 rgba(0, 0, 0, 0.1)", output: true },
@@ -107,3 +126,4 @@ describe("CSS Combi", () => {
         });
     });
 });
+//# sourceMappingURL=is.test.js.map

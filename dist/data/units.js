@@ -23,3 +23,4 @@ exports.units = [
     "ms",
     "s",
 ];
+//# sourceMappingURL=units.js.map
