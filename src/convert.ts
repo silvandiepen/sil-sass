@@ -3,8 +3,22 @@ import { isCssValue, isCssCombi } from "./is";
 
 import { SassInput, SassInputTypes } from "./types";
 
-export const toSassValue = (input: SassInputTypes): string => {
+interface Variables {
+  [key: string]: SassInputTypes;
+}
+interface Output {
+  result: string;
+  variables: Variables;
+  variablesString: string;
+}
+
+export const toSassValue = (
+  input: SassInputTypes,
+  key: string = ""
+): Output => {
+  const vars: Variables = {};
   let convertedInput = "";
+
   if (typeof input == "boolean") {
     convertedInput = input ? "true" : "false";
   } else if (
@@ -13,9 +27,17 @@ export const toSassValue = (input: SassInputTypes): string => {
   ) {
     convertedInput = `${input}`;
   } else if (
-    typeof input == "string" && input.startsWith('[') && input.endsWith(']')
+    typeof input == "string" &&
+    input.startsWith("{") &&
+    input.endsWith("}")
   ) {
-    convertedInput = input.replace('[','').replace(']','');
+    // vars[key] = ;
+    vars[key] = "[" + input.replace("{", "").replace("}", "") + "]";
+    if (key) {
+      convertedInput = `$${key}`;
+    } else {
+      convertedInput = input.replace("{", "").replace("}", "");
+    }
   } else if (typeof input == "string") {
     convertedInput = `"${input}"`;
   } else if (typeof input == "number") {
@@ -29,27 +51,63 @@ export const toSassValue = (input: SassInputTypes): string => {
     });
     convertedInput = `(${entries.join(", ")})`;
   }
-  return convertedInput;
+
+  return {
+    result: convertedInput,
+    variables: vars,
+    variablesString: toSassVariables(vars).variablesString,
+  };
 };
 
-export const toSassObject = (input: SassInput): string => {
+export const toSassObject = (input: SassInput): Output => {
   const sassObjectGroup: string[] = [];
 
+  const vars: Variables = {};
+
   Object.keys(input).forEach((entry: string) => {
-    sassObjectGroup.push(`"${entry}": ${toSassValue(input[entry])}`);
+    const value = toSassValue(input[entry], entry);
+
+    Object.keys(value.variables).forEach((key) => {
+      vars[key] = value.variables[key];
+    });
+
+    sassObjectGroup.push(`"${entry}": ${value.result}`);
   });
 
-  return sassObjectGroup.join(",\n");
+  const sassVariables = toSassVariables(vars);
+
+  return {
+    result: sassObjectGroup.join(",\n"),
+    variables: sassVariables.variables,
+    variablesString: sassVariables.variablesString,
+  };
 };
 
-export const toSassVariables = (input: SassInput): string => {
+export const toSassVariables = (input: SassInput): Output => {
   const sassVariableGroup: string[] = [];
 
+  const fixedInput: Variables = {};
+
   Object.keys(input).forEach((entry: string) => {
-    sassVariableGroup.push(`$${entry}: ${toSassValue(input[entry])};`);
+    const value = toSassValue(input[entry], entry).result;
+
+    if (value.startsWith('"[') && value.endsWith(']"')) {
+      const fixedValue = value.substring(2, value.length - 2);
+      fixedInput[entry] = fixedValue;
+      sassVariableGroup.push(
+        `$${entry}: ${value.substring(2, value.length - 2)};`
+      );
+    } else {
+      fixedInput[entry] = value;
+      sassVariableGroup.push(`$${entry}: ${value};`);
+    }
   });
 
-  return sassVariableGroup.join("\n");
+  return {
+    result: sassVariableGroup.join("\n"),
+    variables: fixedInput,
+    variablesString: sassVariableGroup.join("\n"),
+  };
 };
 
 export const toSassType = (input: any): SassInputTypes => {

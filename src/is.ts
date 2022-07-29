@@ -34,7 +34,7 @@ export const isCssColor = (str: string | number): boolean => {
 export const isCssBoolean = (str: string): boolean =>
   str == "true" || str == "false";
 
-export const isCssValue = (str: string, log = false): boolean => {
+export const isCssValue = (str: string): boolean => {
   let result = false;
 
   if (isCssNumber(str)) result = true;
@@ -54,7 +54,7 @@ export const isCssCombi = (str: string | number): boolean => {
   let conclusion = false;
 
   brokenStr.forEach((s) => {
-    conclusion = isCssValue(s, true);
+    conclusion = isCssValue(s);
   });
 
   return conclusion;

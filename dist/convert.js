@@ -3,7 +3,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.fixSassTypes = exports.toSassType = exports.toSassVariables = exports.toSassObject = exports.toSassValue = void 0;
 const helpers_1 = require("./helpers");
 const is_1 = require("./is");
-const toSassValue = (input) => {
+const toSassValue = (input, key = "") => {
+    const vars = {};
     let convertedInput = "";
     if (typeof input == "boolean") {
         convertedInput = input ? "true" : "false";
@@ -11,6 +12,15 @@ const toSassValue = (input) => {
     else if (typeof input == "string" &&
         ((0, is_1.isCssValue)(input) || (0, is_1.isCssCombi)(input) || input.startsWith("'"))) {
         convertedInput = `${input}`;
+    }
+    else if (typeof input == "string" && input.startsWith('[') && input.endsWith(']')) {
+        vars[key] = input.replace('[', '').replace(']', '');
+        if (key) {
+            convertedInput = `$${key}`;
+        }
+        else {
+            convertedInput = input.replace('[', '').replace(']', '');
+        }
     }
     else if (typeof input == "string") {
         convertedInput = `"${input}"`;
@@ -28,23 +38,40 @@ const toSassValue = (input) => {
         });
         convertedInput = `(${entries.join(", ")})`;
     }
-    return convertedInput;
+    return {
+        result: convertedInput,
+        variables: vars,
+        variablesString: (0, exports.toSassVariables)(vars).variablesString
+    };
 };
 exports.toSassValue = toSassValue;
 const toSassObject = (input) => {
     const sassObjectGroup = [];
+    const vars = {};
     Object.keys(input).forEach((entry) => {
-        sassObjectGroup.push(`"${entry}": ${(0, exports.toSassValue)(input[entry])}`);
+        const value = (0, exports.toSassValue)(input[entry], entry);
+        Object.keys(value.variables).forEach((key) => {
+            vars[key] = value.variables[key];
+        });
+        sassObjectGroup.push(`"${entry}": ${value.result}`);
     });
-    return sassObjectGroup.join(",\n");
+    return {
+        result: sassObjectGroup.join(",\n"),
+        variables: vars,
+        variablesString: (0, exports.toSassVariables)(vars).variablesString
+    };
 };
 exports.toSassObject = toSassObject;
 const toSassVariables = (input) => {
     const sassVariableGroup = [];
     Object.keys(input).forEach((entry) => {
-        sassVariableGroup.push(`$${entry}: ${(0, exports.toSassValue)(input[entry])};`);
+        sassVariableGroup.push(`$${entry}: ${(0, exports.toSassValue)(input[entry], entry)};`);
     });
-    return sassVariableGroup.join("\n");
+    return {
+        result: sassVariableGroup.join("\n"),
+        variables: input,
+        variablesString: sassVariableGroup.join("\n")
+    };
 };
 exports.toSassVariables = toSassVariables;
 const toSassType = (input) => {

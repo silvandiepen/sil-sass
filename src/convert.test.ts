@@ -16,7 +16,7 @@ const sassValues: { input: any; output: string }[] = [
   { input: "ugh", output: '"ugh"' },
   {
     input:
-      '[-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"]',
+      '{-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"}',
     output:
       '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"',
   },
@@ -25,8 +25,17 @@ const sassValues: { input: any; output: string }[] = [
 describe("SassValue", () => {
   Object.keys(sassValues).forEach((_v, key) => {
     it("should convert to a Sass value", () => {
-      expect(toSassValue(sassValues[key].input)).toBe(sassValues[key].output);
+      const result = toSassValue(sassValues[key].input);
+      expect(result.result).toBe(sassValues[key].output);
     });
+  });
+
+  it("should convert to a Sass value, width key", () => {
+    const result = toSassValue(
+      '{-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"}',
+      "test"
+    );
+    expect(result.result).toBe("$test");
   });
 });
 
@@ -48,18 +57,48 @@ describe("SassObject", () => {
 "position": absolute,
 "content": "something"`;
 
-    expect(toSassObject(input)).toBe(output);
+    expect(toSassObject(input).result).toBe(output);
+  });
+  it("Should convert to a correct line of font family", () => {
+    const input = {
+      primaryFontFamily:
+        '{-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"}',
+      secondaryFontFamily: "times",
+    };
+    const output = `"primaryFontFamily": $primaryFontFamily,
+"secondaryFontFamily": "times"`;
+
+    const result = toSassObject(input);
+    expect(result.result).toBe(output);
+  });
+  it("Should convert to a correct line of font family", () => {
+    const input = {
+      primaryFontFamily:
+        '{-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"}',
+      secondaryFontFamily: "times",
+    };
+
+    const variables = {
+      primaryFontFamily:
+        '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"',
+    };
+
+    const result = toSassObject(input);
+    expect(result.variables).toEqual(variables);
   });
 
   it("Should convert to a correct line of font family", () => {
     const input = {
-        primaryFontFamily:
-          '[-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"]',
-        secondaryFontFamily: "times"
+      primaryFontFamily:
+        '{-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"}',
+      secondaryFontFamily: "times",
     };
-    const output = `"primaryFontFamily": -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
-"secondaryFontFamily": "times"`
-    expect(toSassObject(input)).toBe(output);
+
+    const variablesString = `$primaryFontFamily: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";`;
+
+    const result = toSassObject(input);
+
+    expect(result.variablesString).toBe(variablesString);
   });
 });
 
@@ -96,7 +135,8 @@ describe("SassObject", () => {
 "breakpointNames": (small, medium, large),
 "breakpointSizes": (0, 720, 1200)`;
 
-    expect(toSassObject(input)).toBe(output);
+    expect(toSassObject(input).result).toBe(output);
+    expect(toSassObject(input).variables).toEqual({});
   });
 });
 
@@ -144,6 +184,6 @@ $right: center;
 $position: absolute;
 $content: "something";`;
 
-    expect(toSassVariables(input)).toBe(output);
+    expect(toSassVariables(input).result).toBe(output);
   });
 });
