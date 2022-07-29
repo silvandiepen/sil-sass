@@ -1,6 +1,6 @@
 {
   "name": "@sil/sass",
-  "version": "0.0.8",
+  "version": "0.1.0",
   "description": "Convert Json data to Sass",
   "main": "dist/index.js",
   "scripts": {
