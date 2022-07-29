@@ -2,4 +2,12 @@ export declare type SassInputTypes = string | number | boolean | (boolean | stri
 export interface SassInput {
     [key: string]: SassInputTypes;
 }
+export interface SassVariables {
+    [key: string]: SassInputTypes;
+}
+export interface SassOutput {
+    result: string;
+    variables: SassVariables;
+    variablesString: string;
+}
 //# sourceMappingURL=convert.d.ts.map

@@ -1,22 +1,14 @@
 import { getKey } from "./helpers";
 import { isCssValue, isCssCombi } from "./is";
 
-import { SassInput, SassInputTypes } from "./types";
+import { SassInput, SassInputTypes, SassVariables, SassOutput } from "./types";
 
-interface Variables {
-  [key: string]: SassInputTypes;
-}
-interface Output {
-  result: string;
-  variables: Variables;
-  variablesString: string;
-}
 
 export const toSassValue = (
   input: SassInputTypes,
   key: string = ""
-): Output => {
-  const vars: Variables = {};
+): SassOutput => {
+  const vars: SassVariables = {};
   let convertedInput = "";
 
   if (typeof input == "boolean") {
@@ -59,10 +51,10 @@ export const toSassValue = (
   };
 };
 
-export const toSassObject = (input: SassInput): Output => {
+export const toSassObject = (input: SassInput): SassOutput => {
   const sassObjectGroup: string[] = [];
 
-  const vars: Variables = {};
+  const vars: SassVariables = {};
 
   Object.keys(input).forEach((entry: string) => {
     const value = toSassValue(input[entry], entry);
@@ -83,10 +75,10 @@ export const toSassObject = (input: SassInput): Output => {
   };
 };
 
-export const toSassVariables = (input: SassInput): Output => {
+export const toSassVariables = (input: SassInput): SassOutput => {
   const sassVariableGroup: string[] = [];
 
-  const fixedInput: Variables = {};
+  const fixedInput: SassVariables = {};
 
   Object.keys(input).forEach((entry: string) => {
     const value = toSassValue(input[entry], entry).result;
