@@ -12,6 +12,10 @@ export const toSassValue = (input: SassInputTypes): string => {
     (isCssValue(input) || isCssCombi(input) || input.startsWith("'"))
   ) {
     convertedInput = `${input}`;
+  } else if (
+    typeof input == "string" && input.startsWith('[') && input.endsWith(']')
+  ) {
+    convertedInput = input.replace('[','').replace(']','');
   } else if (typeof input == "string") {
     convertedInput = `"${input}"`;
   } else if (typeof input == "number") {

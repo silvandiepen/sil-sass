@@ -1,4 +1,9 @@
-import { toSassValue, toSassObject, toSassVariables, fixSassTypes } from "./convert";
+import {
+  toSassValue,
+  toSassObject,
+  toSassVariables,
+  fixSassTypes,
+} from "./convert";
 
 const sassValues: { input: any; output: string }[] = [
   { input: "rgba()", output: '"rgba()"' },
@@ -9,6 +14,12 @@ const sassValues: { input: any; output: string }[] = [
   { input: "false", output: "false" },
   { input: false, output: "false" },
   { input: "ugh", output: '"ugh"' },
+  {
+    input:
+      '[-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"]',
+    output:
+      '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"',
+  },
 ];
 
 describe("SassValue", () => {
@@ -37,6 +48,17 @@ describe("SassObject", () => {
 "position": absolute,
 "content": "something"`;
 
+    expect(toSassObject(input)).toBe(output);
+  });
+
+  it("Should convert to a correct line of font family", () => {
+    const input = {
+        primaryFontFamily:
+          '[-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"]',
+        secondaryFontFamily: "times"
+    };
+    const output = `"primaryFontFamily": -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
+"secondaryFontFamily": "times"`
     expect(toSassObject(input)).toBe(output);
   });
 });
@@ -78,12 +100,12 @@ describe("SassObject", () => {
   });
 });
 
-
 describe("fixSassTypes", () => {
   it("Should convert to an object with Sass Types", () => {
     const input = {
       prefix: "my-project",
-      primaryFontFamily: '"-apple-system", "BlinkMacSystemFont", "Segoe UI", "Roboto", "Helvetica", "Arial", "sans-serif", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"',
+      primaryFontFamily:
+        '"-apple-system", "BlinkMacSystemFont", "Segoe UI", "Roboto", "Helvetica", "Arial", "sans-serif", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"',
       styleOutput: true,
       classBasedProperties: true,
       generateBase: true,
