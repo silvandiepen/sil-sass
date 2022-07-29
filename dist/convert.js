@@ -13,13 +13,15 @@ const toSassValue = (input, key = "") => {
         ((0, is_1.isCssValue)(input) || (0, is_1.isCssCombi)(input) || input.startsWith("'"))) {
         convertedInput = `${input}`;
     }
-    else if (typeof input == "string" && input.startsWith('[') && input.endsWith(']')) {
-        vars[key] = input.replace('[', '').replace(']', '');
+    else if (typeof input == "string" &&
+        input.startsWith("{") &&
+        input.endsWith("}")) {
+        vars[key] = "[" + input.replace("{", "").replace("}", "") + "]";
         if (key) {
             convertedInput = `$${key}`;
         }
         else {
-            convertedInput = input.replace('[', '').replace(']', '');
+            convertedInput = input.replace("{", "").replace("}", "");
         }
     }
     else if (typeof input == "string") {
@@ -41,7 +43,7 @@ const toSassValue = (input, key = "") => {
     return {
         result: convertedInput,
         variables: vars,
-        variablesString: (0, exports.toSassVariables)(vars).variablesString
+        variablesString: (0, exports.toSassVariables)(vars).variablesString,
     };
 };
 exports.toSassValue = toSassValue;
@@ -55,22 +57,33 @@ const toSassObject = (input) => {
         });
         sassObjectGroup.push(`"${entry}": ${value.result}`);
     });
+    const sassVariables = (0, exports.toSassVariables)(vars);
     return {
         result: sassObjectGroup.join(",\n"),
-        variables: vars,
-        variablesString: (0, exports.toSassVariables)(vars).variablesString
+        variables: sassVariables.variables,
+        variablesString: sassVariables.variablesString,
     };
 };
 exports.toSassObject = toSassObject;
 const toSassVariables = (input) => {
     const sassVariableGroup = [];
+    const fixedInput = {};
     Object.keys(input).forEach((entry) => {
-        sassVariableGroup.push(`$${entry}: ${(0, exports.toSassValue)(input[entry], entry)};`);
+        const value = (0, exports.toSassValue)(input[entry], entry).result;
+        if (value.startsWith('"[') && value.endsWith(']"')) {
+            const fixedValue = value.substring(2, value.length - 2);
+            fixedInput[entry] = fixedValue;
+            sassVariableGroup.push(`$${entry}: ${value.substring(2, value.length - 2)};`);
+        }
+        else {
+            fixedInput[entry] = value;
+            sassVariableGroup.push(`$${entry}: ${value};`);
+        }
     });
     return {
         result: sassVariableGroup.join("\n"),
-        variables: input,
-        variablesString: sassVariableGroup.join("\n")
+        variables: fixedInput,
+        variablesString: sassVariableGroup.join("\n"),
     };
 };
 exports.toSassVariables = toSassVariables;

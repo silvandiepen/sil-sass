@@ -30,7 +30,7 @@ const isCssColor = (str) => {
 exports.isCssColor = isCssColor;
 const isCssBoolean = (str) => str == "true" || str == "false";
 exports.isCssBoolean = isCssBoolean;
-const isCssValue = (str, log = false) => {
+const isCssValue = (str) => {
     let result = false;
     if ((0, exports.isCssNumber)(str))
         result = true;
@@ -53,7 +53,7 @@ const isCssCombi = (str) => {
         .split(" ");
     let conclusion = false;
     brokenStr.forEach((s) => {
-        conclusion = (0, exports.isCssValue)(s, true);
+        conclusion = (0, exports.isCssValue)(s);
     });
     return conclusion;
 };

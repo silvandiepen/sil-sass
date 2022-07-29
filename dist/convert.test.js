@@ -11,7 +11,7 @@ const sassValues = [
     { input: false, output: "false" },
     { input: "ugh", output: '"ugh"' },
     {
-        input: '[-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"]',
+        input: '{-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"}',
         output: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"',
     },
 ];
@@ -23,8 +23,135 @@ describe("SassValue", () => {
         });
     });
     it("should convert to a Sass value, width key", () => {
-        const result = (0, convert_1.toSassValue)('[-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"]', 'test');
-        expect(result.result).toBe('$test');
+        const result = (0, convert_1.toSassValue)('{-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"}', "test");
+        expect(result.result).toBe("$test");
+    });
+});
+describe("SassObject", () => {
+    it("Should convert to a Sass Object", () => {
+        const input = {
+            SomethingGoingOn: true,
+            myValue: [1, 3, 5, "string"],
+            left: "left",
+            right: "center",
+            position: "absolute",
+            content: "something",
+        };
+        const output = `"SomethingGoingOn": true,
+"myValue": (1, 3, 5, string),
+"left": left,
+"right": center,
+"position": absolute,
+"content": "something"`;
+        expect((0, convert_1.toSassObject)(input).result).toBe(output);
+    });
+    it("Should convert to a correct line of font family", () => {
+        const input = {
+            primaryFontFamily: '{-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"}',
+            secondaryFontFamily: "times",
+        };
+        const output = `"primaryFontFamily": $primaryFontFamily,
+"secondaryFontFamily": "times"`;
+        const result = (0, convert_1.toSassObject)(input);
+        expect(result.result).toBe(output);
+    });
+    it("Should convert to a correct line of font family", () => {
+        const input = {
+            primaryFontFamily: '{-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"}',
+            secondaryFontFamily: "times",
+        };
+        const variables = {
+            primaryFontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"',
+        };
+        const result = (0, convert_1.toSassObject)(input);
+        expect(result.variables).toEqual(variables);
+    });
+    it("Should convert to a correct line of font family", () => {
+        const input = {
+            primaryFontFamily: '{-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"}',
+            secondaryFontFamily: "times",
+        };
+        const variablesString = `$primaryFontFamily: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";`;
+        const result = (0, convert_1.toSassObject)(input);
+        expect(result.variablesString).toBe(variablesString);
+    });
+});
+describe("SassObject", () => {
+    it("Should convert to a Sass Object", () => {
+        const input = {
+            prefix: "my-project",
+            styleOutput: true,
+            classBasedProperties: true,
+            generateBase: true,
+            generateTypography: true,
+            generateColors: true,
+            generateColorModes: true,
+            colorModes: true,
+            colorShades: true,
+            colorPercentages: false,
+            colorSteps: [10, 25, 50, 75, 90],
+            colorText: true,
+            breakpointNames: ["small", "medium", "large"],
+            breakpointSizes: [0, 720, 1200],
+        };
+        const output = `"prefix": "my-project",
+"styleOutput": true,
+"classBasedProperties": true,
+"generateBase": true,
+"generateTypography": true,
+"generateColors": true,
+"generateColorModes": true,
+"colorModes": true,
+"colorShades": true,
+"colorPercentages": false,
+"colorSteps": (10, 25, 50, 75, 90),
+"colorText": true,
+"breakpointNames": (small, medium, large),
+"breakpointSizes": (0, 720, 1200)`;
+        expect((0, convert_1.toSassObject)(input).result).toBe(output);
+        expect((0, convert_1.toSassObject)(input).variables).toEqual({});
+    });
+});
+describe("fixSassTypes", () => {
+    it("Should convert to an object with Sass Types", () => {
+        const input = {
+            prefix: "my-project",
+            primaryFontFamily: '"-apple-system", "BlinkMacSystemFont", "Segoe UI", "Roboto", "Helvetica", "Arial", "sans-serif", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"',
+            styleOutput: true,
+            classBasedProperties: true,
+            generateBase: true,
+            generateTypography: true,
+            generateColors: true,
+            generateColorModes: true,
+            colorModes: true,
+            colorShades: true,
+            colorPercentages: false,
+            colorSteps: [10, 25, 50, 75, 90],
+            colorText: true,
+            breakpointNames: ["small", "medium", "large"],
+            breakpointSizes: [0, 720, 1200],
+        };
+        const output = input;
+        expect((0, convert_1.fixSassTypes)(input)).toEqual(output);
+    });
+});
+describe("SassVariables", () => {
+    it("Should convert to a Sass Variables", () => {
+        const input = {
+            SomethingGoingOn: true,
+            myValue: [1, 3, 5, "string"],
+            left: "left",
+            right: "center",
+            position: "absolute",
+            content: "something",
+        };
+        const output = `$SomethingGoingOn: true;
+$myValue: (1, 3, 5, string);
+$left: left;
+$right: center;
+$position: absolute;
+$content: "something";`;
+        expect((0, convert_1.toSassVariables)(input).result).toBe(output);
     });
 });
 //# sourceMappingURL=convert.test.js.map
