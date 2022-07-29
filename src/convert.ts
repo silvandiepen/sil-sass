@@ -1,8 +1,5 @@
-import {
-  
-  isCssValue,
-  isCssCombi
-} from "./is";
+import { getKey } from "./helpers";
+import { isCssValue, isCssCombi } from "./is";
 
 import { SassInput, SassInputTypes } from "./types";
 
@@ -12,8 +9,7 @@ export const toSassValue = (input: SassInputTypes): string => {
     convertedInput = input ? "true" : "false";
   } else if (
     typeof input == "string" &&
-    (isCssValue(input) ||isCssCombi(input) ||
-      input.startsWith("'"))
+    (isCssValue(input) || isCssCombi(input) || input.startsWith("'"))
   ) {
     convertedInput = `${input}`;
   } else if (typeof input == "string") {
@@ -50,4 +46,34 @@ export const toSassVariables = (input: SassInput): string => {
   });
 
   return sassVariableGroup.join("\n");
+};
+
+export const toSassType = (input: any): SassInputTypes => {
+  if (typeof input == "boolean") {
+    return input as boolean;
+  } else if (
+    typeof input == "string" &&
+    (isCssValue(input) || isCssCombi(input) || input.startsWith("'"))
+  ) {
+    return input as string;
+  } else if (typeof input == "string") {
+    return input as string;
+  } else if (typeof input == "number") {
+    return input as number;
+  } else if (Array.isArray(input)) {
+    return input as (string | number | boolean)[];
+  } else {
+    return `${input}` as string;
+  }
+};
+
+export const fixSassTypes = (input: Object): SassInput => {
+  const sassObject: SassInput = {};
+
+  Object.keys(input).forEach((key: string) => {
+    const value = getKey(input, key);
+    sassObject[key] = toSassType(value);
+  });
+
+  return sassObject;
 };
